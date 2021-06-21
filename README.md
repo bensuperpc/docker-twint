@@ -1,6 +1,6 @@
 # docker-twint
 
-### _C compiler twint in docker_
+### _twint in docker_
  [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/powered-by-jeffs-keyboard.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/contains-cat-gifs.svg)](https://forthebadge.com)
  
  [![Twitter](https://img.shields.io/twitter/follow/Bensuperpc?style=social)](https://img.shields.io/twitter/follow/Bensuperpc?style=social) [![Youtube](https://img.shields.io/youtube/channel/subscribers/UCJsQFFL7QW4LSX9eskq-9Yg?style=social)](https://img.shields.io/youtube/channel/subscribers/UCJsQFFL7QW4LSX9eskq-9Yg?style=social) 
@@ -23,13 +23,8 @@ cd docker-twint
 #### Usage
 
 ```sh
-./compiler.sh make (where project to build)
+./twint.sh twint -h
 ```
-#### Exemple
-```sh
-../compiler.sh -
-```
-
 
 #### Build
 ```sh
