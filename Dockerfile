@@ -1,17 +1,16 @@
-ARG DOCKER_IMAGE=alpine:latest
-FROM $DOCKER_IMAGE AS builder
+ARG DOCKER_IMAGE=python:slim
+FROM $DOCKER_IMAGE
 
-RUN apk add --no-cache gcc make musl-dev git \
-	&& git clone --recurse-submodules <<GIT_URL>>
-WORKDIR /<<IMAGE_NAME>>
+RUN apt-get update \
+   && apt-get install -y git lsb-release python3 python3-pip \
+	&& apt-get clean autoclean \
+	&& apt-get autoremove --yes \
+	&& rm -rf /var/lib/{apt,dpkg,cache,log}/
 
-RUN ./configure --config-musl \
-	&& make -j$(nproc) \
-	&& make test -j$(nproc) \
-	&& make install
+RUN git clone --recurse-submodules https://github.com/twintproject/twint.git
+WORKDIR /twint
 
-ARG DOCKER_IMAGE=alpine:latest
-FROM $DOCKER_IMAGE AS runtime
+RUN pip3 install . -r requirements.txt
 
 LABEL author="Bensuperpc <bensuperpc@gmail.com>"
 LABEL mantainer="Bensuperpc <bensuperpc@gmail.com>"
@@ -19,24 +18,17 @@ LABEL mantainer="Bensuperpc <bensuperpc@gmail.com>"
 ARG VERSION="1.0.0"
 ENV VERSION=$VERSION
 
-RUN apk add --no-cache musl-dev make
-
-COPY --from=builder /usr/local /usr/local
-
-ENV PATH="/usr/local/bin:${PATH}"
-
-ENV CC=/usr/local/bin/<<IMAGE_NAME>>
 WORKDIR /usr/src/myapp
 
-CMD ["", "-h"]
+CMD ["twint", "-h"]
 
 LABEL org.label-schema.schema-version="1.0" \
 	  org.label-schema.build-date=$BUILD_DATE \
-	  org.label-schema.name="bensuperpc/<<IMAGE_NAME>>" \
-	  org.label-schema.description="build <<IMAGE_NAME>> compiler" \
+	  org.label-schema.name="bensuperpc/twint" \
+	  org.label-schema.description="build twint compiler" \
 	  org.label-schema.version=$VERSION \
 	  org.label-schema.vendor="Bensuperpc" \
 	  org.label-schema.url="http://bensuperpc.com/" \
-	  org.label-schema.vcs-url="https://github.com/Bensuperpc/docker-<<IMAGE_NAME>>" \
+	  org.label-schema.vcs-url="https://github.com/Bensuperpc/docker-twint" \
 	  org.label-schema.vcs-ref=$VCS_REF \
-	  org.label-schema.docker.cmd="docker build -t bensuperpc/<<IMAGE_NAME>> -f Dockerfile ."
+	  org.label-schema.docker.cmd="docker build -t bensuperpc/twint -f Dockerfile ."

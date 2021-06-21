@@ -20,8 +20,8 @@
 #//  CPU: ALL                                                //
 #//                                                          //
 #//////////////////////////////////////////////////////////////
-BASE_IMAGE := alpine:latest
-IMAGE_NAME := bensuperpc/<<IMAGE_NAME>>
+BASE_IMAGE := python:slim
+IMAGE_NAME := bensuperpc/twint
 DOCKERFILE := Dockerfile
 
 DOCKER := docker
@@ -31,20 +31,20 @@ DATE_FULL := $(shell date -u "+%Y-%m-%dT%H:%M:%SZ")
 UUID := $(shell cat /proc/sys/kernel/random/uuid)
 VERSION := 1.0.0
 
-ARCH_LIST := linux/amd64 linux/386 linux/arm64 linux/ppc64le linux/s390x linux/arm/v7 linux/arm/v6
+ARCH_LIST := linux/amd64 linux/386 linux/arm64 linux/ppc64le linux/arm/v7 linux/arm/v6 linux/s390x
 comma:= ,
 COM_ARCH_LIST:= $(subst $() $(),$(comma),$(ARCH_LIST))
 
 $(ARCH_LIST): $(DOCKERFILE)
 	$(DOCKER) buildx build . -f $(DOCKERFILE) -t $(IMAGE_NAME):$(TAG) -t $(IMAGE_NAME):latest \
 	--build-arg BUILD_DATE=$(DATE_FULL) --build-arg DOCKER_IMAGE=$(BASE_IMAGE) --platform $@ \
-	--build-arg VERSION=$(VERSION) --load
+	--build-arg VERSION=$(VERSION) --progress=plain --load
 
 	
 all: $(DOCKERFILE)
 	$(DOCKER) buildx build . -f $(DOCKERFILE) -t $(IMAGE_NAME):$(TAG) -t $(IMAGE_NAME):latest \
 	--build-arg BUILD_DATE=$(DATE_FULL) --build-arg DOCKER_IMAGE=$(BASE_IMAGE) --platform $(COM_ARCH_LIST) \
-	--build-arg VERSION=$(VERSION) --push
+	--build-arg VERSION=$(VERSION) --progress=plain --push
 
 push: all
 
