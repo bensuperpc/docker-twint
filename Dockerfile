@@ -2,12 +2,12 @@ ARG DOCKER_IMAGE=python:slim
 FROM $DOCKER_IMAGE
 
 RUN apt-get update \
-   && apt-get install -y gcc git lsb-release --no-install-recommends \
+   && apt-get install -y gcc g++ git lsb-release --no-install-recommends \
 	&& git clone --depth=1 https://github.com/twintproject/twint.git \
 	&& cd /twint \
 	&& pip3 install . -r requirements.txt \
 	&& rm -rf /twint \
-	&& apt-get remove gcc git -y \
+	&& apt-get remove gcc g++ git -y \
 	&& apt-get clean autoclean \
 	&& apt-get autoremove --yes \
 	&& rm -rf /var/lib/{apt,dpkg,cache,log}/ \
